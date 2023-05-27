@@ -131,7 +131,7 @@ with st.sidebar:
     # 해당 기간의 시계열 결과를 보여주고 싶었음! 빼도 상관없어유~
     time_range = st.slider("날짜를 설정하시오", 
                            value=(datetime(2021, 1, 1), datetime(2023, 3, 31)),
-                           format="MM/DD/YY")
+                           format="YYYY/MM/DD")
     
     region_option = st.selectbox("지역을 선택하세요", 
                           ("서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시",
