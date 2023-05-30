@@ -13,7 +13,7 @@ import numpy as np
 
 fp1 = "/Users/stella/github/2023_dscap/EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
 fp2 = "/Users/stella/github/2023_dscap/twitterdata/labeling/total_labeling_preprocessed.csv"
-fp3 = "/Users/stella/github/2023_dscap/twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"
+fp3 = "/Users/stella/github/2023_dscap/twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
 
 @st.cache_data
 def load_data(file_path):
