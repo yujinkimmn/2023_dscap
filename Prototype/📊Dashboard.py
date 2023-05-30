@@ -6,10 +6,14 @@ import folium
 from folium.plugins import HeatMap, MarkerCluster
 from streamlit_folium import st_folium
 from streamlit_modal import Modal
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 fp1 = "/Users/stella/github/2023_dscap/EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
 fp2 = "/Users/stella/github/2023_dscap/twitterdata/labeling/total_labeling_preprocessed.csv"
+fp3 = "/Users/stella/github/2023_dscap/twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"
 
 @st.cache_data
 def load_data(file_path):
@@ -162,4 +166,21 @@ with col2:
 
     with tab3:
         st.subheader("Histogram")
-        # Add code
+        df = pd.read_csv(fp3)
+        df.drop_duplicates(['content', 'user.username', 'date'], inplace=True)  #중복으로 수집된 트윗 제거
+        df_grouped = pd.DataFrame(df.groupby('user.displayname')['content'].count())  #닉네임 기준으로 개수 세기
+        df_grouped.reset_index(inplace = True)
+        df_grouped.sort_values('content', inplace=True, ascending=False)
+        df_new = df_grouped[df_grouped['content'] >= 20]  #20번 이상 등장한 닉네임
+
+        #히스토그램
+        plt.figure(figsize = (20,15))
+        sns.set(font = 'NanumGothic', font_scale = 1.5, rc = {'axes.unicode_minus': False}, style = 'darkgrid')
+        fig = sns.barplot(
+            x = 'content', y = 'user.displayname', data = df_new, width = 0.8)
+        fig.set_yticks(np.arange(0, len(df_new)+1, 2))
+        fig.set_title('User Name Appeared More Than 20 Times', fontsize = 20)
+        fig.set_xlabel('Frequency', size = 15)
+        fig.set_ylabel('Name', size = 15)
+        fig = fig.figure
+        st.pyplot(fig)
