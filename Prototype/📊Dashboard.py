@@ -41,7 +41,7 @@ def get_timechart(data):
     
     
     lines = (
-        alt.Chart(data, height=500, title="마약 거래 게시물 추이")
+        alt.Chart(data, height=500)
         .mark_bar()
         .encode(
             x="date",
@@ -69,9 +69,9 @@ def get_timechart(data):
 
     return (lines + points + tooltips).interactive()
     
-def timeseries(file_path):
+@st.cache_data
+def timeseries_preprocessing(data):
     global df
-    df = load_data(file_path)
     global flowday
     
     for i in range(len(df['date'])):
@@ -108,7 +108,16 @@ def timeseries(file_path):
     flowday = flowday.iloc[0:, 3:5]
     flowday = flowday.rename(columns={'type1':'count'})
     
-    print(flowday)
+    return flowday
+
+
+def timeseries(file_path):
+    global df
+    df = load_data(file_path)
+    global flowday
+    
+    flowday = timeseries_preprocessing(df)
+    
     # 기본 line chart 형태
     #st.line_chart(flowday, x="date", y="count")
     chart = get_timechart(flowday)
@@ -152,6 +161,7 @@ def visualize_clusters(df, n_clusters):
     st.altair_chart(graph, use_container_width=True)
     
 
+@st.cache_data
 def clustering(file_path):
     global df
     df = load_data(file_path)
