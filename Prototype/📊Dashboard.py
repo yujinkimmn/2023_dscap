@@ -3,7 +3,6 @@ import altair as alt
 import pandas as pd
 import time
 import re
-from vega_datasets import data
 from datetime import datetime
 import folium
 from folium.plugins import HeatMap, MarkerCluster
@@ -18,13 +17,13 @@ from sklearn.cluster import KMeans
 from wordcloud import WordCloud
 
 
-fp1 = "/Users/yeon/Documents/2023/ds_capstone/2023_dscap/EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
-fp2 = "/Users/yeon/Documents/2023/ds_capstone/2023_dscap/twitterdata/labeling/total_labeling_preprocessed.csv"
-fp3 = "/Users/yeon/Documents/2023/ds_capstone/2023_dscap/twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
+fp1 = "EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
+fp2 = "twitterdata/labeling/total_labeling_preprocessed.csv"
+fp3 = "twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
 
-file_timeseries = "./files/total_preprocessed.csv"
+file_timeseries = "Prototype/files/total_preprocessed.csv"
 
-file_clustering = "./files/total_tokenized_mecab.csv"
+file_clustering = "Prototype/files/total_tokenized_mecab.csv"
 
 @st.cache_data
 def load_data(file_path):
