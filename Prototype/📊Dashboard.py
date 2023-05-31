@@ -431,7 +431,7 @@ with col2:
     
     with tab2: 
         st.subheader("Wordcloud")
-        # Add code
+        w_cloud()
 
     with tab3:
         st.subheader("Histogram")
