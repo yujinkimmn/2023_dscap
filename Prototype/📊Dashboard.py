@@ -15,6 +15,7 @@ import numpy as np
 from gensim.models import Word2Vec
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+from wordcloud import WordCloud
 
 
 fp1 = "/Users/yeon/Documents/2023/ds_capstone/2023_dscap/EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
@@ -41,7 +42,7 @@ def get_timechart(data):
     
     
     lines = (
-        alt.Chart(data, height=500)
+        alt.Chart(data, height=500, title="마약 거래 게시물 추이")
         .mark_bar()
         .encode(
             x="date",
@@ -69,9 +70,9 @@ def get_timechart(data):
 
     return (lines + points + tooltips).interactive()
     
-@st.cache_data
-def timeseries_preprocessing(data):
+def timeseries(file_path):
     global df
+    df = load_data(file_path)
     global flowday
     
     for i in range(len(df['date'])):
@@ -108,16 +109,7 @@ def timeseries_preprocessing(data):
     flowday = flowday.iloc[0:, 3:5]
     flowday = flowday.rename(columns={'type1':'count'})
     
-    return flowday
-
-
-def timeseries(file_path):
-    global df
-    df = load_data(file_path)
-    global flowday
-    
-    flowday = timeseries_preprocessing(df)
-    
+    print(flowday)
     # 기본 line chart 형태
     #st.line_chart(flowday, x="date", y="count")
     chart = get_timechart(flowday)
@@ -161,7 +153,6 @@ def visualize_clusters(df, n_clusters):
     st.altair_chart(graph, use_container_width=True)
     
 
-@st.cache_data
 def clustering(file_path):
     global df
     df = load_data(file_path)
@@ -221,6 +212,7 @@ def clustering(file_path):
     for i, word in enumerate(PCA_data_complet['word']):
       PCA_data_complet['counts'][i] = corpus_total.count(word)
     
+    global PCA_drug
     PCA_drug = PCA_data_complet[PCA_data_complet['labels']==PCA_data_complet.loc[0].labels]
     
     kmeans = KMeans(n_clusters=2)
@@ -231,6 +223,65 @@ def clustering(file_path):
     
     visualize_clusters(PCA_drug, 2)
 
+
+def w_cloud():
+    PCA_drug_removed = PCA_drug
+
+    keywords = ['스틸녹스', '신의눈물', '에토미데이트', '옥시코돈', '졸피뎀', '트라마돌', '캔디케이', '케타민',
+                '러쉬파퍼', '랏슈', '정글주스', '엘에스디', '엑스터시', '마법의버섯', '환각버섯', 
+                '떨액', '북한산아이스', '빙두', '삥두', '사끼', '샤부', '시원한술', '아이스술', '액상떨', '작대기',
+                '히로뽕', '크리스탈', '차가운술', '아이스', '찬술', '드라퍼', '브액', '아이스드랍', '클럽약', 
+                '텔레', '파티약', '패치', '후리베이스', '주사기', '허브', '물뽕', '발정제', '최음제', '사티바',
+                '인디카', '합성대마', '해시시', '대마초']
+
+    for i in keywords:
+        PCA_drug_removed = PCA_drug_removed[~PCA_drug_removed['word'].str.contains(i)]  #키워드 제외한 결과
+
+    words_rev = []
+    counts_rev = []
+    words_list_rev = list(PCA_drug_removed['word'])
+    counts_list_rev = list(PCA_drug_removed['counts'])
+
+    for i in range(len(words_list_rev)):
+        if len(words_list_rev[i]) >= 2:  #2글자 이상인 단어만
+            words_rev.append(words_list_rev[i])
+            counts_rev.append(counts_list_rev[i])
+    word_count_removed = dict(zip(words_rev, counts_rev))    
+
+    #워드클라우드 그리기
+    wordcloud = WordCloud(font_path = 'NanumBarunGothic', background_color = 'white', colormap = 'rainbow_r',
+                     width = 4000, height = 3000).generate_from_frequencies(word_count_removed)
+    fig = plt.figure()
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.show()
+    st.pyplot(fig)   
+
+
+
+def histogram():
+    global fp3
+    df = pd.read_csv(fp3)
+
+    df.drop_duplicates(['content', 'user.username', 'date'], inplace=True)  #중복으로 수집된 트윗 제거
+    df_grouped = pd.DataFrame(df.groupby('user.displayname')['content'].count())  #닉네임 기준으로 개수 세기
+    df_grouped.reset_index(inplace = True)
+    df_grouped.sort_values('content', inplace=True, ascending=False)
+    df_new = df_grouped[df_grouped['content'] >= 20]  #20번 이상 등장한 닉네임
+
+    #히스토그램
+    plt.figure(figsize = (20,15))
+    sns.set(font = 'NanumBarunGothic', font_scale = 1.5, rc = {'axes.unicode_minus': False}, style = 'darkgrid')
+    fig = sns.barplot(
+        x = 'content', y = 'user.displayname', data = df_new, width = 0.8)
+    fig.set_yticks(np.arange(0, len(df_new)+1, 2))
+    fig.set_title('User Name Appeared More Than 20 Times', fontsize = 20)
+    fig.set_xlabel('Frequency', size = 15)
+    fig.set_ylabel('Name', size = 15)
+    fig = fig.figure
+    st.pyplot(fig)
+
+    
 def popup_html():
     html = '''<!DOCTYPE html>
 <html>
@@ -352,6 +403,10 @@ with st.sidebar:
                           ("서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시",
                            "대전광역시", "울산광역시", "세종특별자치시", "경기도", "강원도", 
                            "충청북도", "충청남도", "전라북도", "전라남도", "경상북도", "경상남도", "제주특별자치도"))
+
+
+
+
     
     
 col1, col2 = st.columns([3,2])
@@ -380,21 +435,4 @@ with col2:
 
     with tab3:
         st.subheader("Histogram")
-        df = pd.read_csv(fp3)
-        df.drop_duplicates(['content', 'user.username', 'date'], inplace=True)  #중복으로 수집된 트윗 제거
-        df_grouped = pd.DataFrame(df.groupby('user.displayname')['content'].count())  #닉네임 기준으로 개수 세기
-        df_grouped.reset_index(inplace = True)
-        df_grouped.sort_values('content', inplace=True, ascending=False)
-        df_new = df_grouped[df_grouped['content'] >= 20]  #20번 이상 등장한 닉네임
-
-        #히스토그램
-        plt.figure(figsize = (20,15))
-        sns.set(font = 'NanumGothic', font_scale = 1.5, rc = {'axes.unicode_minus': False}, style = 'darkgrid')
-        fig = sns.barplot(
-            x = 'content', y = 'user.displayname', data = df_new, width = 0.8)
-        fig.set_yticks(np.arange(0, len(df_new)+1, 2))
-        fig.set_title('User Name Appeared More Than 20 Times', fontsize = 20)
-        fig.set_xlabel('Frequency', size = 15)
-        fig.set_ylabel('Name', size = 15)
-        fig = fig.figure
-        st.pyplot(fig)
+        histogram()
