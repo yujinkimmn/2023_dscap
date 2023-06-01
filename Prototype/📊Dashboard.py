@@ -405,7 +405,7 @@ with st.sidebar:
     # 오늘 날짜로 슬라이더 끝을 설정
     today = date.today()
     today_datetime = datetime.combine(today, datetime.min.time())
-    time = st.slider("날짜를 설정하세요.",
+    time = st.slider("날짜를 설정하세요.", datetime(2021, 1, 1), today_datetime,
                            value=(datetime(2021, 1, 1), today_datetime),
                            format="YYYY/MM/DD")
     

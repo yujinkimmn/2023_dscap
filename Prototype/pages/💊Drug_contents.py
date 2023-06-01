@@ -80,7 +80,7 @@ with st.sidebar:
     # 오늘 날짜로 슬라이더 끝을 설정
     today = date.today()
     today_datetime = datetime.combine(today, datetime.min.time())
-    time_range = st.slider("날짜를 설정하시오", 
+    time_range = st.slider("날짜를 설정하시오", datetime(2021, 1, 1), today_datetime,
                             value=(datetime(2021, 1, 1), today_datetime),
                             format="YYYY/MM/DD")
 # Match timezone
