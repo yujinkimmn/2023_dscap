@@ -10,6 +10,7 @@ from streamlit_folium import st_folium
 from streamlit_modal import Modal
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import fontManager, FontProperties
 import numpy as np
 from gensim.models import Word2Vec
 from sklearn.decomposition import PCA
@@ -20,6 +21,7 @@ from wordcloud import WordCloud
 fp1 = "EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
 fp2 = "twitterdata/labeling/total_labeling_preprocessed.csv"
 fp3 = "twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
+fp4 = "Prototype/files/NanumBarunGothic.ttf"  #폰트 경로
 
 file_timeseries = "Prototype/files/total_preprocessed.csv"
 
@@ -248,7 +250,8 @@ def w_cloud():
     word_count_removed = dict(zip(words_rev, counts_rev))    
 
     #워드클라우드 그리기
-    wordcloud = WordCloud(font_path = 'NanumBarunGothic', background_color = 'white', colormap = 'rainbow_r',
+    global fp4
+    wordcloud = WordCloud(font_path = fp4, background_color = 'white', colormap = 'rainbow_r',
                      width = 4000, height = 3000).generate_from_frequencies(word_count_removed)
     fig = plt.figure()
     plt.imshow(wordcloud, interpolation='bilinear')
@@ -269,8 +272,11 @@ def histogram():
     df_new = df_grouped[df_grouped['content'] >= 20]  #20번 이상 등장한 닉네임
 
     #히스토그램
+    global fp4
+    fontManager.addfont(fp4)
+    prop = FontProperties(fname = fp4)
     plt.figure(figsize = (20,15))
-    sns.set(font = 'NanumBarunGothic', font_scale = 1.5, rc = {'axes.unicode_minus': False}, style = 'darkgrid')
+    sns.set(font = prop.get_name(), font_scale = 1.5, rc = {'axes.unicode_minus': False}, style = 'darkgrid')
     fig = sns.barplot(
         x = 'content', y = 'user.displayname', data = df_new, width = 0.8)
     fig.set_yticks(np.arange(0, len(df_new)+1, 2))
