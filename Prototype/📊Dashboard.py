@@ -203,7 +203,6 @@ def clustering(file_path):
     
     # 단어 빈도 수 열 추가
     PCA_data_complet['counts'] = 0
-
 #    for i, word in enumerate(PCA_data_complet['word']):
 #      PCA_data_complet['counts'][i] = corpus_total.count(word)
     
