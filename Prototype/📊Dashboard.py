@@ -419,7 +419,7 @@ with st.sidebar:
 
     
     
-col1, col2 = st.columns([3,2])
+col1, col2 = st.columns([2,2])
 with col1:
     st.title("Map")
     map_visualization()
