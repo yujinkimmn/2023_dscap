@@ -72,12 +72,9 @@ def get_timechart(data):
     return (lines + points + tooltips).interactive()
     
 def timeseries(file_path):
-    print("start")
     global df
     df = load_data(file_path)
     global flowday
-    
-    print("here")
     
     df['year'] = 0
     df['month'] = 0
@@ -111,7 +108,6 @@ def timeseries(file_path):
     # 기본 line chart 형태
     #st.line_chart(flowday, x="date", y="count")
     chart = get_timechart(flowday)
-    print("here here")
     
     ANNOTATIONS = [
     ("2021-11-03", "일 5개 이내 유지"),
@@ -208,8 +204,8 @@ def clustering(file_path):
     # 단어 빈도 수 열 추가
     PCA_data_complet['counts'] = 0
 
-    for i, word in enumerate(PCA_data_complet['word']):
-      PCA_data_complet['counts'][i] = corpus_total.count(word)
+#    for i, word in enumerate(PCA_data_complet['word']):
+#      PCA_data_complet['counts'][i] = corpus_total.count(word)
     
     global PCA_drug
     PCA_drug = PCA_data_complet[PCA_data_complet['labels']==PCA_data_complet.loc[0].labels]
