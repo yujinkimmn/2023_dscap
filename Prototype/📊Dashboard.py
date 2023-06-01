@@ -72,12 +72,12 @@ def get_timechart(data):
     return (lines + points + tooltips).interactive()
     
 def timeseries(file_path):
+    print("start")
     global df
     df = load_data(file_path)
     global flowday
     
-    for i in range(len(df['date'])):
-        df['date'][i] = str(df['date'][i]).split(" ")[0]
+    print("here")
     
     df['year'] = 0
     df['month'] = 0
@@ -85,19 +85,13 @@ def timeseries(file_path):
 
     for i in range(len(df['date'])):
       if (str(df['date'][i])[4] == '.') :
-        df['date'][i] = str(df['date'][i].split('.')[0]) + "-" + str(df['date'][i].split('.')[1]) + "-" + str(df['date'][i].split('.')[2])
+        df['year'][i] = str(df['date'][i]).split(".")[0]
+        df['month'][i] = str(df['date'][i]).split(".")[1]
+        df['day'][i] = (str(df['date'][i]).split(".")[2]).split(" ")[0]
       else:
-        df['date'][i] = str(df['date'][i].split('-')[0]) + "-" + str(df['date'][i].split('-')[1]) + "-" + str(df['date'][i].split('-')[2])
-
-
-    df['date'] = pd.to_datetime(df['date'])
-
-    print(df['date'][0])
-
-    for i in range(len(df['date'])):
-      df['year'][i] = str(df['date'][i]).split("-")[0]
-      df['month'][i] = str(df['date'][i]).split("-")[1]
-      df['day'][i] = (str(df['date'][i]).split("-")[2]).split(" ")[0]
+        df['year'][i] = str(df['date'][i]).split("-")[0]
+        df['month'][i] = str(df['date'][i]).split("-")[1]
+        df['day'][i] = (str(df['date'][i]).split("-")[2]).split(" ")[0]
 
     flowday = df.groupby(['year', 'month', 'day']).count().reset_index()
     flowday = flowday.iloc[0:, :4]
@@ -106,14 +100,18 @@ def timeseries(file_path):
     for i in range(len(flowday)):
         flowday['date'][i] = str(flowday['year'][i]) + "-" + str(flowday['month'][i]) + "-" + str(flowday['day'][i])
 
+    flowday = flowday.sort_values("date")
     flowday['date'] = pd.to_datetime(flowday['date'])
     flowday = flowday.iloc[0:, 3:5]
     flowday = flowday.rename(columns={'type1':'count'})
-    
+    flowday = flowday.groupby(['date']).sum()
+    flowday = flowday.reset_index()
+
     print(flowday)
     # 기본 line chart 형태
     #st.line_chart(flowday, x="date", y="count")
     chart = get_timechart(flowday)
+    print("here here")
     
     ANNOTATIONS = [
     ("2021-11-03", "일 5개 이내 유지"),
