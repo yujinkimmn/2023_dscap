@@ -3,7 +3,7 @@ import altair as alt
 import pandas as pd
 import time
 import re
-from datetime import datetime
+from datetime import datetime, date
 import folium
 from folium.plugins import HeatMap, MarkerCluster
 from streamlit_folium import st_folium
@@ -394,8 +394,11 @@ with st.sidebar:
     
     st.subheader("Parameter")
     # 해당 기간의 시계열 결과를 보여주고 싶었음! 빼도 상관없어유~
+    # 오늘 날짜로 슬라이더 끝을 설정
+    today = date.today()
+    today_datetime = datetime.combine(today, datetime.min.time())
     time_range = st.slider("날짜를 설정하시오", 
-                           value=(datetime(2021, 1, 1), datetime(2023, 3, 31)),
+                           value=(datetime(2021, 1, 1), today_datetime),
                            format="YYYY/MM/DD")
     
     region_option = st.selectbox("지역을 선택하세요", 
