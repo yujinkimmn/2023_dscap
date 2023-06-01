@@ -383,7 +383,7 @@ def map_visualization():
         lng = row['경도']
         freq = row['빈도']
         drug = row['마약류']
-        popup_content = folium.Popup(f'마약류: {drug}', max_width=300)
+        popup_content = folium.Popup(f'빈도: {freq}, 마약류: {drug}', max_width=300)
 
         # Create a marker and add it to the MarkerCluster layer
         marker = folium.Marker(location=[lat, lng], popup=popup_content, tooltip='마약류 확인')
@@ -415,8 +415,6 @@ with st.sidebar:
                            "충청북도", "충청남도", "전라북도", "전라남도", "경상북도", "경상남도", "제주특별자치도"))
 
 
-
-
     
     
 col1, col2 = st.columns([2,2])
@@ -434,14 +432,14 @@ with col2:
     tab1, tab2, tab3= st.tabs(['Clustering' , 'Wordcloud', 'Histogram'])
     
     with tab1:
-        st.subheader("Clustering")
+        #st.subheader("Clustering")
         clustering(file_clustering)
         
     
     with tab2: 
-        st.subheader("Wordcloud")
+        #st.subheader("Wordcloud")
         w_cloud()
 
     with tab3:
-        st.subheader("Histogram")
+        #st.subheader("Histogram")
         histogram()
