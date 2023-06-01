@@ -18,14 +18,14 @@ from sklearn.cluster import KMeans
 from wordcloud import WordCloud
 
 
-fp1 = "EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
-fp2 = "twitterdata/labeling/total_labeling_preprocessed.csv"
-fp3 = "twitterdata/preprocessing/preprocessed/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
-fp4 = "Prototype/files/NanumBarunGothic.ttf"  #폰트 경로
+fp1 = "C:/Users/seonh/Documents/GitHub/2023_dscap/EDA/Region_analysis/지역별마약류빈도_위경도포함_최종.csv"
+fp2 = "C:/Users/seonh/Documents/GitHub/2023_dscap/twitterdata/labeling/total_labeling_preprocessed.csv"
+fp3 = "C:/Users/seonh/Capstone/total_preprocessed_name_revise.csv"  #이름 특수기호 처리
+fp4 = "C:/Users/seonh/Documents/GitHub/2023_dscap/Prototype/files/NanumBarunGothic.ttf"  #폰트 경로
 
-file_timeseries = "Prototype/files/total_preprocessed.csv"
+file_timeseries = "C:/Users/seonh/Documents/GitHub/2023_dscap/Prototype/files/total_preprocessed.csv"
 
-file_clustering = "Prototype/files/total_tokenized_mecab.csv"
+file_clustering = "C:/Users/seonh/Documents/GitHub/2023_dscap/Prototype/files/total_tokenized_mecab.csv"
 
 @st.cache_data
 def load_data(file_path):
@@ -203,8 +203,8 @@ def clustering(file_path):
     
     # 단어 빈도 수 열 추가
     PCA_data_complet['counts'] = 0
-#    for i, word in enumerate(PCA_data_complet['word']):
-#      PCA_data_complet['counts'][i] = corpus_total.count(word)
+    for i, word in enumerate(PCA_data_complet['word']):
+      PCA_data_complet['counts'][i] = corpus_total.count(word)
     
     global PCA_drug
     PCA_drug = PCA_data_complet[PCA_data_complet['labels']==PCA_data_complet.loc[0].labels]
@@ -251,7 +251,6 @@ def w_cloud():
     plt.axis('off')
     plt.show()
     st.pyplot(fig)   
-
 
 
 def histogram():
