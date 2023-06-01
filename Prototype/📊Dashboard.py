@@ -32,6 +32,7 @@ def load_data(file_path):
     data = pd.read_csv(file_path, encoding = "utf-8")
     return data
 
+@st.cache_data
 def get_timechart(data):
     hover = alt.selection_single(
         fields=["date"],
@@ -147,7 +148,7 @@ def load_data(file_path):
     data = pd.read_csv(file_path)
     return data
     
-
+@st.cache_data
 def visualize_clusters(df, n_clusters):
     graph = alt.Chart(df.reset_index()).mark_point(filled=True, size=60).encode(
         x=alt.X('x_values'),
@@ -157,7 +158,7 @@ def visualize_clusters(df, n_clusters):
     ).interactive()
     st.altair_chart(graph, use_container_width=True)
     
-
+@st.cache_data
 def clustering(file_path):
     global df
     df = load_data(file_path)
