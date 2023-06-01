@@ -32,7 +32,6 @@ def load_data(file_path):
     data = pd.read_csv(file_path, encoding = "utf-8")
     return data
 
-@st.cache_data(ttl=60 * 60 * 24)
 def get_timechart(data):
     hover = alt.selection_single(
         fields=["date"],
@@ -107,7 +106,23 @@ def timeseries(file_path):
     print(flowday)
     # 기본 line chart 형태
     #st.line_chart(flowday, x="date", y="count")
-    chart = get_timechart(flowday)
+    
+    
+    print(time)
+    print(str(time[0]).split(" ")[0].split("-")[0])
+    if ((2021 <= int(str(time[0]).split(" ")[0].split("-")[0]) <= 2022) or (int(str(time[0]).split(" ")[0].split("-")[0]) == 2023 & int(str(time[0]).split(" ")[0].split("-")[1]) <= 3)) & ((2021 <= int(str(time[1]).split(" ")[0].split("-")[0]) <= 2022) or (int(str(time[1]).split(" ")[0].split("-")[0]) == 2023 & int(str(time[1]).split(" ")[0].split("-")[1]) <= 3)):
+            flowday_selected = flowday
+            print("time", time)
+            print(flowday_selected[flowday_selected["date"]==str(time[0])])
+            a = flowday_selected[str(time[0]).split(" ")[0] <= flowday_selected['date']]
+            b = a[a['date'] <= str(time[1]).split(" ")[0]]
+            b = pd.DataFrame(b)
+            b = b.reset_index()
+            b = b.iloc[0:, 1:3]
+            print(b)
+            chart = get_timechart(b)
+    else:
+        chart = get_timechart(flowday)
     
     ANNOTATIONS = [
     ("2021-11-03", "일 5개 이내 유지"),
@@ -395,7 +410,7 @@ with st.sidebar:
     # 오늘 날짜로 슬라이더 끝을 설정
     today = date.today()
     today_datetime = datetime.combine(today, datetime.min.time())
-    time_range = st.slider("날짜를 설정하시오", 
+    time = st.slider("날짜를 설정하시오",
                            value=(datetime(2021, 1, 1), today_datetime),
                            format="YYYY/MM/DD")
     
@@ -421,18 +436,17 @@ with col2:
     flowday = pd.DataFrame()
     timeseries(file_timeseries)
 
-
     tab1, tab2, tab3= st.tabs(['Clustering' , 'Wordcloud', 'Histogram'])
     
     with tab1:
         st.subheader("Clustering")
-        clustering(file_clustering)
+        #clustering(file_clustering)
         
     
     with tab2: 
         st.subheader("Wordcloud")
-        w_cloud()
+        #w_cloud()
 
     with tab3:
         st.subheader("Histogram")
-        histogram()
+        #histogram()
