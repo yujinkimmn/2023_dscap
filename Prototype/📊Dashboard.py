@@ -43,7 +43,7 @@ def get_timechart(data):
     
     
     lines = (
-        alt.Chart(data, height=500, title="마약 거래 게시물 추이")
+        alt.Chart(data, height=500)
         .mark_bar()
         .encode(
             x="date",
@@ -136,7 +136,7 @@ def timeseries(file_path):
     .mark_text(size=20, text="⬇", dx=-8, dy=-10, align="left")
     .encode(
         x="date:T",
-        y=alt.Y("y:Q"),
+        y=alt.Y(" :Q"),
         tooltip=["event"],
     )
     .interactive())
